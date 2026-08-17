@@ -2,9 +2,18 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "tokyonight-night",
+      colorscheme = "cyberdream",
     },
   },
+  {
+    "scottmckendry/cyberdream.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      variant = "auto",
+    },
+  },
+  { "projekt0n/github-nvim-theme", name = "github-theme" },
   {
     "folke/tokyonight.nvim",
     opts = {
