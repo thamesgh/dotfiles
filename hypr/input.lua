@@ -55,6 +55,11 @@ hl.config {
   }
 }
 
+hl.device({
+  name = "pixa3854:00-093a:0274-touchpad",
+  sensitivity = 0.0,
+})
+
 -- App-specific touchpad scroll speeds.
 -- o.window("(Alacritty|kitty|foot)", { scroll_touchpad = 1.5 })
 -- o.window("com.mitchellh.ghostty", { scroll_touchpad = 0.2 })
