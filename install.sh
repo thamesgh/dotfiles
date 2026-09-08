@@ -39,6 +39,25 @@ done
 echo "Linking tmux.conf..."
 ln -sf "$DOTFILES/tmux.conf" "$HOME/.tmux.conf"
 
+echo "Linking customized Hyprland config files..."
+HYPR_CONFIG="$HOME/.config/hypr"
+mkdir -p "$HYPR_CONFIG"
+
+for source in "$DOTFILES"/hypr/*; do
+  [ -f "$source" ] || continue
+
+  name="$(basename "$source")"
+  target="$HYPR_CONFIG/$name"
+
+  if [ -e "$target" ] && [ ! -L "$target" ]; then
+    backup="$target.bak.$(date +%Y%m%d%H%M%S)"
+    echo "Backing up $target to $backup"
+    mv "$target" "$backup"
+  fi
+
+  ln -sfn "$source" "$target"
+done
+
 echo "Installing TPM (tmux plugin manager)..."
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
