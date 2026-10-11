@@ -101,7 +101,7 @@ hl.bind("SUPER + SHIFT + P", function()
 		hl.dispatch(hl.dsp.window.float({ action = "set" }))
 
 		hl.dispatch(hl.dsp.window.resize({
-			x = 1400,
+			x = 1500,
 			y = height,
 			relative = false,
 		}))
