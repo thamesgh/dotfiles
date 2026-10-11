@@ -137,3 +137,5 @@ o.bind("SUPER + SHIFT + E", "Gmail", { webapp = "https://mail.google.com/" })
 
 hl.unbind("SUPER + SHIFT + C")
 o.bind("SUPER + SHIFT + C", "Google Calendar", { webapp = "https://calendar.google.com/" })
+
+o.bind("SUPER + SHIFT + H", "HEY email", { webapp = "https://app.hey.com" })
