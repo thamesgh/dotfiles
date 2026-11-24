@@ -48,3 +48,15 @@ rex.action{
 
 rex.bind("ctrl+cmd+]", "rotate_panes_forward")
 rex.bind("ctrl+cmd+[", "rotate_panes_backward")
+
+-- Navigate panes with vim motions.
+rex.bind("ctrl+cmd+h", "pane.focus.left")
+rex.bind("ctrl+cmd+j", "pane.focus.down")
+rex.bind("ctrl+cmd+k", "pane.focus.up")
+rex.bind("ctrl+cmd+l", "pane.focus.right")
+
+-- Split panes with vim motions.
+rex.bind("ctrl+cmd+shift+h", "pane.split.left")
+rex.bind("ctrl+cmd+shift+j", "pane.split.down")
+rex.bind("ctrl+cmd+shift+k", "pane.split.up")
+rex.bind("ctrl+cmd+shift+l", "pane.split.right")
