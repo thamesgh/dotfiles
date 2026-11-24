@@ -13,6 +13,10 @@ return {
 			variant = "auto",
 			highlights = {
 				CursorLine = { bg = "NONE" },
+				Visual = { bg = "#fff3a8", fg = "#16181a" },
+				Search = { bg = "#fff3a8", fg = "#16181a" },
+				IncSearch = { bg = "#fff3a8", fg = "#16181a" },
+				CurSearch = { bg = "#fff3a8", fg = "#16181a", bold = true },
 			},
 		},
 	},
