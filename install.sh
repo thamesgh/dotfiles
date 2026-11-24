@@ -58,6 +58,13 @@ for source in "$DOTFILES"/hypr/*; do
   ln -sfn "$source" "$target"
 done
 
+echo "Linking rex config..."
+mkdir -p "$HOME/.config/rex"
+for source in "$DOTFILES/rex"/*; do
+  [ -e "$source" ] || continue
+  ln -sfn "$source" "$HOME/.config/rex/$(basename "$source")"
+done
+
 echo "Installing TPM (tmux plugin manager)..."
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
