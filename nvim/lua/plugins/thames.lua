@@ -11,6 +11,9 @@ return {
 		priority = 1000,
 		opts = {
 			variant = "auto",
+			highlights = {
+				CursorLine = { bg = "NONE" },
+			},
 		},
 	},
 	{ "projekt0n/github-nvim-theme", name = "github-theme" },
