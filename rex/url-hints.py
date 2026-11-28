@@ -357,7 +357,8 @@ class Anim:
 
 
 class Bubble:
-    """A URL drawn as a rounded bubble with its hint in a tag at the left end.
+    """A URL drawn as a rounded bubble with its hint in a rounded tag at the
+    left end.
 
     spans are the URL's cells, [(row, start_col, end_col)], one per screen row
     it covers. label replaces the text in the bubble (for messages)."""
@@ -372,18 +373,23 @@ class Bubble:
         return self.spans[0][0]
 
     def cells(self, width):
-        """[(row, col, kind, index)] with kind cap_left, tag, body or cap_right.
+        """[(row, col, kind, index)] with kind cap_left, tag, tag_right, body
+        or cap_right.
 
-        The tag and left cap go in front of the URL, so the URL stays whole,
-        unless the URL starts too close to the left edge for them."""
+        The tag is a fully rounded pill at the bubble's left end; its right
+        end sits on the bubble's color. The tag goes in front of the URL, so
+        the URL stays whole, unless the URL starts too close to the left edge."""
         k = len(self.hint)
         row, lo, _ = self.spans[0]
-        left = max(0, lo - k - 1)
+        tag_width = k + 1 if k else 0  # letters and the tag's right end
+        left = max(0, lo - tag_width - 1)
         out = [(row, left, "cap_left", 0)]
         out += [(row, left + 1 + i, "tag", i) for i in range(k)]
+        if k:
+            out.append((row, left + 1 + k, "tag_right", 0))
         n = 0
         for i, (r, a, b) in enumerate(self.spans):
-            start = left + 1 + k if i == 0 else a
+            start = left + 1 + tag_width if i == 0 else a
             for c in range(start, b):
                 out.append((r, c, "body", n))
                 n += 1
@@ -493,6 +499,14 @@ class Screen:
                 strength = 0.45 if i < len(typed) else 1.0
                 ink = mix(bg, theme["ink"], t * strength)
                 self.put(row, c, (bubble.hint[i], sgr(("rgb", ink), ("rgb", bg), [True] + plain[1:])))
+            elif kind == "tag_right":
+                # The tag's rounded right end, on the bubble's color.
+                bg = mix(base, body_color, e)
+                color = mix(base, theme["tag"], e)
+                if not swap:
+                    self.put(row, c, (orig, sgr(("rgb", mix(orig_fg, bg, t)), ("rgb", bg), plain)))
+                    continue
+                self.put(row, c, (CAP_RIGHT, sgr(("rgb", color), ("rgb", bg), plain)))
             else:
                 left = kind == "cap_left"
                 color = theme["tag"] if left and bubble.hint else body_color
