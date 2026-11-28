@@ -150,7 +150,7 @@ local function url_hints(ctx)
       options = {
         shell   = "none",
         command = { "/usr/bin/python3", config_dir .. "/url-hints.py",
-                    path, tostring(size.columns), tostring(size.rows) },
+                    path, tostring(size.columns), tostring(size.rows), block_id },
       },
     },
   }

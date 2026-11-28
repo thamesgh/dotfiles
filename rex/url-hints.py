@@ -7,10 +7,11 @@ back while each URL becomes a blue bubble with a letter hint, and opens
 the chosen URL in the default browser. Leaving fades back to the original
 screen before the pane closes, so the overlay never visibly pops.
 
-Usage: url-hints.py SCREEN_FILE COLUMNS ROWS
+Usage: url-hints.py SCREEN_FILE COLUMNS ROWS [BLOCK]
   SCREEN_FILE  the pane's screen as VT sequences (deleted after reading)
   COLUMNS      the pane's width
   ROWS         the pane's height
+  BLOCK        the pane's block ID, focused again when the overlay closes
 
 Keys: type a hint to open its URL, backspace to undo a letter, escape or
 ctrl+c to cancel.
@@ -550,8 +551,24 @@ class Screen:
 
 # --- Main -------------------------------------------------------------------
 
+def refocus(block_id):
+    """Give focus back to the pane the overlay covers. When a floating pane
+    closes, Rex focuses whichever pane it picks, which isn't always this one;
+    doing it as the fade-out starts means the overlay never hands focus away."""
+    rex = os.path.join(os.environ.get("REX_BIN_DIR", ""), "rex")
+    session = os.environ.get("REX_SESSION")
+    if not block_id or not session or not os.access(rex, os.X_OK):
+        return False
+    try:
+        return subprocess.Popen([rex, "focus", "-s", session, block_id],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except OSError:
+        return False
+
+
 def main():
     path, columns, height = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
+    origin = sys.argv[4] if len(sys.argv) > 4 else None
     with open(path, encoding="utf-8", errors="replace") as f:
         data = f.read()
     try:
@@ -581,7 +598,7 @@ def main():
     fd = sys.stdin.fileno()
     saved = termios.tcgetattr(fd)
     signal.signal(signal.SIGWINCH, lambda *_: None)
-    opener = None
+    opener = focuser = None
     try:
         tty.setraw(fd)
         # The pane starts at a default size and takes the size it is shown at
@@ -605,6 +622,8 @@ def main():
 
         while True:
             now = time.monotonic()
+            if closing and focuser is None:
+                focuser = refocus(origin)
             if auto_close and now >= auto_close and not closing:
                 closing = True
                 screen.dim.to(0.0, FADE_OUT, now)
@@ -657,8 +676,12 @@ def main():
         # pane closes. Restoring the main screen or the cursor here would show
         # a blank frame or a stray cursor before it goes.
         termios.tcsetattr(fd, termios.TCSADRAIN, saved)
-        if opener:
-            opener.wait()
+        for proc in (opener, focuser):
+            if proc:
+                try:
+                    proc.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    pass
 
 
 if __name__ == "__main__":
